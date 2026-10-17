@@ -22,6 +22,12 @@ import { sql } from "drizzle-orm";
 async function main() {
   console.log("🌱 Starting seed...");
   
+  // Ensure columns exist on campaigns table if table already existed
+  await db.execute(sql`
+    ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS replied_count text NOT NULL DEFAULT '0';
+    ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS booked_count text NOT NULL DEFAULT '0';
+  `);
+
   // Truncate all tables safely
   await db.execute(sql`
     TRUNCATE TABLE 
@@ -145,9 +151,9 @@ async function main() {
   }
 
   const [camp1] = await db.insert(schema.campaigns).values([
-    { site_id: brightSmiles.id, name: "Fall Special", channel: "both", subject: "20% off whitening", body: "Special offer for our patients!", status: "sent", sent_at: now.toISOString(), total_recipients: "20", sent_count: "20", delivered_count: "19", failed_count: "1" },
-    { site_id: brightSmiles.id, name: "Checkup Reminder", channel: "sms", body: "Time for your checkup!", status: "sent", sent_at: now.toISOString(), total_recipients: "15", sent_count: "15", delivered_count: "15", failed_count: "0" },
-    { site_id: brightSmiles.id, name: "Newsletter", channel: "email", subject: "Dental Tips", body: "Brush twice daily!", status: "draft", total_recipients: "0" },
+    { site_id: brightSmiles.id, name: "Fall Special", channel: "both", subject: "20% off whitening", body: "Special offer for our patients!", status: "sent", sent_at: now.toISOString(), total_recipients: "20", sent_count: "20", delivered_count: "19", failed_count: "1", replied_count: "3", booked_count: "2" },
+    { site_id: brightSmiles.id, name: "Checkup Reminder", channel: "sms", body: "Time for your checkup!", status: "sent", sent_at: now.toISOString(), total_recipients: "15", sent_count: "15", delivered_count: "15", failed_count: "0", replied_count: "2", booked_count: "1" },
+    { site_id: brightSmiles.id, name: "Newsletter", channel: "email", subject: "Dental Tips", body: "Brush twice daily!", status: "draft", total_recipients: "0", replied_count: "0", booked_count: "0" },
   ]).returning();
 
   await db.insert(schema.campaignRecipients).values(patients.slice(0, 20).map(p => ({
