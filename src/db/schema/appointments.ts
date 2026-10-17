@@ -13,6 +13,7 @@ export const appointments = pgTable(
       .notNull()
       .references(() => patients.id, { onDelete: 'cascade' }),
     appointment_type: text('appointment_type').notNull(),
+    provider: text('provider').notNull().default('Dr. Smith'),
     start_time: timestamp('start_time', { withTimezone: true, mode: 'string' }).notNull(),
     end_time: timestamp('end_time', { withTimezone: true, mode: 'string' }).notNull(),
     status: text('status').notNull().default('scheduled'), // 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'

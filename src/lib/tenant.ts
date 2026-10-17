@@ -1,3 +1,6 @@
+if (typeof window === 'undefined' && process.env.NEXT_RUNTIME) {
+  require('server-only');
+}
 import { getSession } from './session';
 import { db } from '@/db';
 import * as schema from '@/db/schema';
@@ -44,3 +47,4 @@ export async function getTenantContext() {
     session,
   };
 }
+
