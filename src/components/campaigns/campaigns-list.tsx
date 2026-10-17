@@ -105,7 +105,7 @@ export function CampaignsList({ campaigns, siteId }: CampaignsListProps) {
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t text-xs text-muted-foreground">
-                <span>{camp.sent_at ? `Sent ${new Date(camp.sent_at).toLocaleDateString()}` : camp.scheduled_for ? `Scheduled ${new Date(camp.scheduled_for).toLocaleDateString()}` : `Created ${new Date(camp.created_at).toLocaleDateString()}`}</span>
+                <span>{camp.sent_at ? `Sent ${camp.sent_at.split('T')[0]}` : camp.scheduled_for ? `Scheduled ${camp.scheduled_for.split('T')[0]}` : `Created ${camp.created_at ? camp.created_at.split('T')[0] : ''}`}</span>
                 <div className="flex items-center gap-1.5">
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(camp.id)}>
                     <Trash2 className="h-4 w-4" />

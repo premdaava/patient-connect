@@ -76,7 +76,7 @@ export function RecipientTable({ recipients }: Props) {
                     </td>
                     <td className="p-3 uppercase text-xs font-semibold text-muted-foreground">{rec.channel}</td>
                     <td className="p-3">{getStatusBadge(rec.status)}</td>
-                    <td className="p-3 text-xs text-muted-foreground">{rec.sent_at ? new Date(rec.sent_at).toLocaleString() : '-'}</td>
+                    <td className="p-3 text-xs text-muted-foreground">{rec.sent_at ? rec.sent_at.replace('T', ' ').slice(0, 16) : '-'}</td>
                     <td className="p-3 text-xs text-muted-foreground">
                       {rec.error_message ? <span className="text-destructive flex items-center gap-1"><AlertCircle className="h-3 w-3" /> {rec.error_message}</span> : rec.status === 'booked' ? 'Appointment booked' : rec.status === 'replied' ? 'Patient replied' : 'Delivered successfully'}
                     </td>
