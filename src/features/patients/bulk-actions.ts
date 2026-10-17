@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { getTenantContext } from '@/lib/tenant';
 import { bulkAddTagSchema, bulkSendMessageSchema } from './schemas';
 import { sendMockSms } from '@/lib/providers/sms.mock';
-import { sendMockEmail } from '@/lib/providers/email.mock';
+import { sendEmail } from '@/lib/providers/email.resend';
 
 export async function bulkAddTag(values: { patient_ids: string[]; tag: string }) {
   const tenant = await getTenantContext();
@@ -67,7 +67,7 @@ export async function bulkSendMessage(values: { patient_ids: string[]; channel: 
     if (parsed.channel === 'sms') {
       providerResult = await sendMockSms({ siteId, patientId, to: recipient, body: parsed.body });
     } else {
-      providerResult = await sendMockEmail({ siteId, patientId, to: recipient, subject: parsed.subject || 'Message from Clinic', body: parsed.body });
+      providerResult = await sendEmail({ siteId, patientId, to: recipient, subject: parsed.subject || 'Message from Clinic', body: parsed.body });
     }
 
     if (!providerResult.success) {
