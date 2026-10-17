@@ -13,3 +13,14 @@ export const migrationClient = postgres(env.DATABASE_URL, { max: 1 });
 const queryClient = postgres(env.DATABASE_URL);
 export const db = drizzle(queryClient, { schema });
 
+// Automatically ensure site_settings columns exist to prevent missing column errors
+try {
+  queryClient.unsafe(`
+    ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS quiet_hours jsonb;
+    ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS notifications jsonb;
+  `).catch(() => {});
+} catch (e) {
+  // ignore
+}
+
+
