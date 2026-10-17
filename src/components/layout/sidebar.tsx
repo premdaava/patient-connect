@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { getSidebarUnreadCount } from '@/features/inbox/actions';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -37,6 +39,21 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchUnread() {
+      try {
+        const count = await getSidebarUnreadCount();
+        setUnreadCount(count);
+      } catch (e) {
+        // ignore if unauthenticated or error
+      }
+    }
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 10000);
+    return () => clearInterval(interval);
+  }, [pathname]);
 
   return (
     <div
@@ -66,18 +83,29 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+            const isInbox = item.href === '/inbox';
 
             return (
               <Link key={item.href} href={item.href}>
                 <Button
                   variant={isActive ? 'secondary' : 'ghost'}
                   className={cn(
-                    'w-full justify-start',
+                    'w-full justify-between',
                     isCollapsed && 'justify-center px-2'
                   )}
                 >
-                  <Icon className={cn('h-4 w-4', !isCollapsed && 'mr-2')} />
-                  {!isCollapsed && <span>{item.label}</span>}
+                  <div className="flex items-center gap-2">
+                    <Icon className={cn('h-4 w-4', !isCollapsed && 'mr-2')} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </div>
+                  {isInbox && unreadCount > 0 && !isCollapsed && (
+                    <Badge variant="default" className="h-5 px-1.5 text-[10px] rounded-full">
+                      {unreadCount}
+                    </Badge>
+                  )}
+                  {isInbox && unreadCount > 0 && isCollapsed && (
+                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" />
+                  )}
                 </Button>
               </Link>
             );
@@ -105,3 +133,4 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     </div>
   );
 }
+
