@@ -1,7 +1,26 @@
 import { z } from 'zod';
 
+if (typeof window === 'undefined') {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+      for (const line of lines) {
+        const match = line.match(/^([^=]+)=(.*)$/);
+        if (match) {
+          const key = match[1].trim();
+          const val = match[2].trim().replace(/^["'](.*)["']$/, '$1');
+          if (!process.env[key]) process.env[key] = val;
+        }
+      }
+    }
+  } catch {}
+}
+
 const envSchema = z.object({
-  DATABASE_URL: z.string().url().min(1),
+  DATABASE_URL: z.string().min(1),
   SESSION_SECRET: z.string().min(32),
   APP_URL: z.string().url(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),

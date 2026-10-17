@@ -1,37 +1,34 @@
-'use client';
+import { getTenantContext } from '@/lib/tenant';
+import { getPatients, getPatientTags } from '@/features/patients/queries';
+import { PatientsView } from '@/components/patients/patients-view';
 
-import { PageHeader } from '@/components/shared/page-header';
-import { EmptyState } from '@/components/shared/empty-state';
-import { Button } from '@/components/ui/button';
-import { Users, Plus } from 'lucide-react';
+export default async function PatientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const tenant = await getTenantContext();
+  const siteId = tenant.site.id;
+  const params = await searchParams;
 
-export default function PatientsPage() {
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        icon={Users}
-        title="Patients"
-        description="Manage your patient database"
-        actions={
-          <>
-            <Button variant="outline">Import CSV</Button>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Patient
-            </Button>
-          </>
-        }
-      />
+  const search = typeof params.search === 'string' ? params.search : undefined;
+  const consent = typeof params.consent === 'string' ? params.consent : undefined;
+  const tag = typeof params.tag === 'string' ? params.tag : undefined;
+  const lastVisit = typeof params.lastVisit === 'string' ? params.lastVisit : undefined;
+  const page = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
 
-      <EmptyState
-        icon={Users}
-        title="No patients yet"
-        description="Get started by adding your first patient or importing from a CSV file"
-        action={{
-          label: 'Add Patient',
-          onClick: () => console.log('Add patient'),
-        }}
-      />
-    </div>
-  );
+  const data = await getPatients(siteId, {
+    search,
+    consent,
+    tag,
+    lastVisit,
+    page,
+    limit: 15,
+  });
+
+  const tags = await getPatientTags(siteId);
+
+  return <PatientsView data={data} tags={tags} />;
 }
+
+

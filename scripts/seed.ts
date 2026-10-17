@@ -1,4 +1,19 @@
 #!/usr/bin/env tsx
+import fs from 'fs';
+import path from 'path';
+const envPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+  for (const line of lines) {
+    const match = line.match(/^([^=]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      const val = match[2].trim().replace(/^["'](.*)["']$/, '$1');
+      process.env[key] = val;
+    }
+  }
+}
+
 import { db, migrationClient } from "../src/db";
 import * as schema from "../src/db/schema";
 import { hashSync } from "bcryptjs";
@@ -80,6 +95,7 @@ async function main() {
         site_id: brightSmiles.id,
         patient_id: patients[(Math.abs(d + 7) * 4 + j) % patients.length].id,
         appointment_type: j % 2 === 0 ? "Cleaning" : "Exam",
+        provider: j % 2 === 0 ? "Dr. Sarah Johnson" : "Dr. Mike Chen",
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
         status: d < 0 ? "completed" : d === 0 ? "confirmed" : "scheduled",
