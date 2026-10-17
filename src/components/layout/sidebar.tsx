@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { getSidebarUnreadCount } from '@/features/inbox/actions';
+import { ThemeToggle } from '@/components/shared/theme-toggle';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -113,12 +114,12 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         </nav>
       </ScrollArea>
 
-      <div className="border-t p-3">
+      <div className="border-t p-3 flex items-center justify-between gap-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className={cn('w-full', isCollapsed && 'px-2')}
+          className={cn('flex-1', isCollapsed && 'px-2')}
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -129,6 +130,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             </>
           )}
         </Button>
+        {!isCollapsed && <ThemeToggle />}
       </div>
     </div>
   );
