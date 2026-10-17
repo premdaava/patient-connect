@@ -1,34 +1,33 @@
-'use client';
-
+import { getTenantContext } from '@/lib/tenant';
+import { getCampaigns } from '@/features/campaigns/queries';
 import { PageHeader } from '@/components/shared/page-header';
-import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Megaphone, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { CampaignsList } from '@/components/campaigns/campaigns-list';
 
-export default function CampaignsPage() {
+export default async function CampaignsPage() {
+  const tenant = await getTenantContext();
+  const campaigns = await getCampaigns(tenant.site.id);
+
   return (
     <div className="space-y-6">
       <PageHeader
         icon={Megaphone}
         title="Campaigns"
-        description="Send targeted messages to patients"
+        description="Send targeted automated messages and track patient conversions"
         actions={
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Campaign
+          <Button asChild>
+            <Link href="/campaigns/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New Campaign
+            </Link>
           </Button>
         }
       />
 
-      <EmptyState
-        icon={Megaphone}
-        title="No campaigns yet"
-        description="Create your first campaign to send targeted messages to patients"
-        action={{
-          label: 'New Campaign',
-          onClick: () => console.log('New campaign'),
-        }}
-      />
+      <CampaignsList campaigns={campaigns} siteId={tenant.site.id} />
     </div>
   );
 }
+
