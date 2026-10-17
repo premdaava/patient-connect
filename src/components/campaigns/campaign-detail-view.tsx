@@ -46,7 +46,7 @@ export function CampaignDetailView({ campaign, siteId }: Props) {
             <Badge className="capitalize">{campaign.status}</Badge>
           </div>
           <p className="text-sm text-muted-foreground capitalize">
-            {campaign.channel} campaign &bull; Created {new Date(campaign.created_at).toLocaleDateString()}
+            {campaign.channel} campaign &bull; Created {campaign.created_at ? campaign.created_at.split('T')[0] : ''}
           </p>
         </div>
         {campaign.status === 'scheduled' && (
