@@ -9,11 +9,12 @@ import { Calendar as CalendarIcon, Plus, List, Grid, Bell, Search } from 'lucide
 import { AppointmentsCalendar } from './appointments-calendar';
 import { AppointmentsTable } from './appointments-table';
 import { AppointmentDrawer } from './appointment-drawer';
+import { BookingRequestsPanel } from './booking-requests-panel';
 import { runDueReminders } from '@/features/appointments/actions';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export function AppointmentsView({ appointments, patients, providers }: any) {
+export function AppointmentsView({ appointments, patients, providers, bookingRequests, siteId }: any) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -55,11 +56,11 @@ export function AppointmentsView({ appointments, patients, providers }: any) {
       <PageHeader
         icon={CalendarIcon}
         title="Appointments"
-        description="Schedule and manage appointments across providers"
+        description="Schedule and manage appointments"
         actions={
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleRunReminders} disabled={pending}>
-              <Bell className="mr-2 h-4 w-4" /> Run due reminders now
+              <Bell className="mr-2 h-4 w-4" /> Run reminders
             </Button>
             <Button onClick={() => { setSelectedAppointment(null); setDrawerOpen(true); }}>
               <Plus className="mr-2 h-4 w-4" /> New Appointment
@@ -68,11 +69,15 @@ export function AppointmentsView({ appointments, patients, providers }: any) {
         }
       />
 
+      {bookingRequests && bookingRequests.length > 0 && (
+        <BookingRequestsPanel requests={bookingRequests} siteId={siteId} />
+      )}
+
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl border shadow-sm">
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search patient, type, provider..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
+            <Input placeholder="Search patient, type..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -116,3 +121,4 @@ export function AppointmentsView({ appointments, patients, providers }: any) {
     </div>
   );
 }
+
