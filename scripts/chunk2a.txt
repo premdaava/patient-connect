@@ -1,0 +1,69 @@
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-base font-semibold">Upcoming Appointments</CardTitle>
+                <CardDescription>Next scheduled visits at your practice</CardDescription>
+              </div>
+              <Link href="/appointments"><Button variant="ghost" size="sm" className="gap-1 text-xs">View all <ChevronRight className="h-3.5 w-3.5" /></Button></Link>
+            </CardHeader>
+            <CardContent>
+              {d.upcomingAppointments.length === 0 ? (
+                <div className="py-8 text-center text-sm text-muted-foreground">No upcoming appointments found.</div>
+              ) : (
+                <div className="space-y-3">
+                  {d.upcomingAppointments.map((apt) => {
+                    const aptDate = new Date(apt.start_time);
+                    return (
+                      <div key={apt.id} className="flex items-center justify-between rounded-lg border p-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                            {apt.patient_first[0]}{apt.patient_last[0]}
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{apt.patient_first} {apt.patient_last}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {apt.appointment_type} • {aptDate.toLocaleDateString([], { month: 'short', day: 'numeric' })} at {aptDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant={apt.status === 'confirmed' ? 'default' : 'secondary'} className="capitalize text-xs">{apt.status}</Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-base font-semibold">Recent Patient Replies</CardTitle>
+                <CardDescription>Latest inbound messages from conversations</CardDescription>
+              </div>
+              <Link href="/inbox"><Button variant="ghost" size="sm" className="gap-1 text-xs">Open inbox <ChevronRight className="h-3.5 w-3.5" /></Button></Link>
+            </CardHeader>
+            <CardContent>
+              {d.recentReplies.length === 0 ? (
+                <div className="py-8 text-center text-sm text-muted-foreground">No recent replies found.</div>
+              ) : (
+                <div className="space-y-3">
+                  {d.recentReplies.map((reply) => {
+                    const replyDate = new Date(reply.created_at);
+                    return (
+                      <Link key={reply.id} href={`/inbox?thread=${reply.thread_id}`} className="block rounded-lg border p-3 transition-colors hover:bg-muted/50">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-sm">{reply.patient_first} {reply.patient_last}</span>
+                          <span className="text-xs text-muted-foreground">{replyDate.toLocaleDateString([], { month: 'short', day: 'numeric' })} at {replyDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-1">&ldquo;{reply.body}&rdquo;</p>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
