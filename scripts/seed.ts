@@ -167,18 +167,25 @@ async function main() {
 
   const completedApts = appointments.filter(a => a.status === "completed");
   if (completedApts.length > 0) {
-    await db.insert(schema.reviewRequests).values(completedApts.slice(0, 20).map((a, i) => ({
-      site_id: brightSmiles.id,
-      patient_id: a.patient_id,
-      appointment_id: a.id,
-      token: `token_${i}_${Math.random()}`,
-      channel: "sms",
-      status: "submitted",
-      sent_at: now.toISOString(),
-      submitted_at: now.toISOString(),
-      rating: String((i % 2) + 4),
-      feedback: "Great service!",
-    })));
+    const reviewVals = completedApts.slice(0, 20).map((a, i) => {
+      const ratingVal = (i % 5) + 1;
+      const isSubmitted = i % 3 !== 0;
+      const isClicked = !isSubmitted && i % 2 === 0;
+      return {
+        site_id: brightSmiles.id,
+        patient_id: a.patient_id,
+        appointment_id: a.id,
+        token: `token_${i}_${Math.random().toString(36).substring(2, 8)}`,
+        channel: (i % 2 === 0 ? "sms" : "email") as "sms" | "email",
+        status: isSubmitted ? "submitted" : isClicked ? "clicked" : "sent",
+        sent_at: now.toISOString(),
+        opened_at: isClicked || isSubmitted ? now.toISOString() : null,
+        submitted_at: isSubmitted ? now.toISOString() : null,
+        rating: isSubmitted ? String(ratingVal) : null,
+        feedback: isSubmitted ? (ratingVal <= 3 ? "Wait time was long and staff seemed rushed." : "Amazing experience, very professional!") : null,
+      };
+    });
+    await db.insert(schema.reviewRequests).values(reviewVals);
   }
 
   const statsData = [];
