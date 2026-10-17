@@ -21,6 +21,8 @@ export const campaigns = pgTable(
     sent_count: text('sent_count').notNull().default('0'),
     delivered_count: text('delivered_count').notNull().default('0'),
     failed_count: text('failed_count').notNull().default('0'),
+    replied_count: text('replied_count').notNull().default('0'),
+    booked_count: text('booked_count').notNull().default('0'),
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
@@ -48,7 +50,7 @@ export const campaignRecipients = pgTable(
       .notNull()
       .references(() => patients.id, { onDelete: 'cascade' }),
     channel: text('channel').notNull(), // 'sms' | 'email'
-    status: text('status').notNull().default('pending'), // 'pending' | 'sent' | 'delivered' | 'failed' | 'opted_out'
+    status: text('status').notNull().default('pending'), // 'pending' | 'sent' | 'delivered' | 'failed' | 'opted_out' | 'replied' | 'booked'
     sent_at: timestamp('sent_at', { withTimezone: true, mode: 'string' }),
     delivered_at: timestamp('delivered_at', { withTimezone: true, mode: 'string' }),
     error_message: text('error_message'),
@@ -70,3 +72,4 @@ export type Campaign = typeof campaigns.$inferSelect;
 export type NewCampaign = typeof campaigns.$inferInsert;
 export type CampaignRecipient = typeof campaignRecipients.$inferSelect;
 export type NewCampaignRecipient = typeof campaignRecipients.$inferInsert;
+
