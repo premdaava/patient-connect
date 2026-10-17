@@ -2,21 +2,21 @@
 import { db, migrationClient } from "../src/db";
 import * as schema from "../src/db/schema";
 import { hashSync } from "bcryptjs";
+import { sql } from "drizzle-orm";
 
 async function main() {
   console.log("🌱 Starting seed...");
   
-  const tables = [
-    schema.messageStats, schema.campaignRecipients, schema.campaigns,
-    schema.reviewRequests, schema.messages, schema.threads,
-    schema.templates, schema.reminders, schema.appointments,
-    schema.consents, schema.patients, schema.bookingRequests,
-    schema.siteSettings, schema.memberships, schema.users, schema.sites
-  ];
-  
-  for (const t of tables) {
-    await db.delete(t);
-  }
+  // Truncate all tables safely
+  await db.execute(sql`
+    TRUNCATE TABLE 
+      message_stats, campaign_recipients, campaigns,
+      review_requests, messages, threads,
+      templates, reminders, appointments,
+      consents, patients, booking_requests,
+      site_settings, memberships, users, sites
+    CASCADE;
+  `);
 
   const [brightSmiles, lakeside, peakPhysio] = await db.insert(schema.sites).values([
     { name: "Bright Smiles Dental", slug: "bright-smiles-dental", timezone: "America/New_York", phone: "+12125551234", email: "contact@brightsmilesdental.com", address: "123 Main St, New York, NY 10001", website: "https://brightsmilesdental.com" },
