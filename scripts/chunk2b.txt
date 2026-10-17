@@ -1,0 +1,49 @@
+        <div className="space-y-6">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-semibold flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Setup Progress</CardTitle>
+                <span className="text-sm font-bold text-primary">{d.onboardingProgress}%</span>
+              </div>
+              <Progress value={d.onboardingProgress} className="mt-2 h-2" />
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className={d.totalPatients > 0 ? 'text-foreground font-medium' : 'text-muted-foreground'}>{d.totalPatients > 0 ? '✓' : '○'} Import patients ({d.totalPatients} added)</span>
+                <Link href="/patients"><Button variant="ghost" size="sm" className="h-7 text-xs">View</Button></Link>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-foreground font-medium">✓ Set Google Review link</span>
+                <Link href="/settings"><Button variant="ghost" size="sm" className="h-7 text-xs">Setup</Button></Link>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-foreground font-medium">✓ Enable automated reminders</span>
+                <Link href="/settings"><Button variant="ghost" size="sm" className="h-7 text-xs">Enable</Button></Link>
+              </div>
+            </CardContent>
+            {d.onboardingProgress < 100 && (
+              <CardFooter className="pt-0">
+                <Link href="/onboarding" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full text-xs">Complete Onboarding <ArrowUpRight className="ml-1 h-3.5 w-3.5" /></Button>
+                </Link>
+              </CardFooter>
+            )}
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
+              <CardDescription>Common practice management tasks</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Link href="/patients" className="block"><Button variant="outline" className="w-full justify-start gap-2"><Plus className="h-4 w-4 text-primary" /> Add Patient</Button></Link>
+              <Link href="/appointments" className="block"><Button variant="outline" className="w-full justify-start gap-2"><Calendar className="h-4 w-4 text-primary" /> New Appointment</Button></Link>
+              <Link href="/campaigns" className="block"><Button variant="outline" className="w-full justify-start gap-2"><Send className="h-4 w-4 text-primary" /> Send Broadcast</Button></Link>
+              <Link href="/inbox" className="block"><Button variant="outline" className="w-full justify-start gap-2"><MessageSquare className="h-4 w-4 text-primary" /> Open Inbox</Button></Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
