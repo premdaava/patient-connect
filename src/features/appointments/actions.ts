@@ -93,7 +93,30 @@ export async function updateAppointmentStatus(siteId: string, id: string, status
     .where(and(eq(schema.appointments.site_id, siteId), eq(schema.appointments.id, id)))
     .returning();
 
+  if (status === 'completed' && updated) {
+    const [settings] = await db
+      .select()
+      .from(schema.siteSettings)
+      .where(eq(schema.siteSettings.site_id, siteId))
+      .limit(1);
+
+    if (settings?.auto_request_reviews === 'true') {
+      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const nowIso = new Date().toISOString();
+      await db.insert(schema.reviewRequests).values({
+        site_id: siteId,
+        patient_id: updated.patient_id,
+        appointment_id: updated.id,
+        token,
+        channel: 'sms',
+        status: 'sent',
+        sent_at: nowIso,
+      });
+    }
+  }
+
   revalidatePath('/appointments');
+  revalidatePath('/reviews');
   return { success: true, appointment: updated };
 }
 
