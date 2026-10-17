@@ -40,6 +40,8 @@ export const siteSettings = pgTable('site_settings', {
   reminder_hours_before: text('reminder_hours_before').notNull().default('24'),
   review_link: text('review_link'),
   auto_request_reviews: text('auto_request_reviews').notNull().default('false'),
+  quiet_hours: jsonb('quiet_hours'),
+  notifications: jsonb('notifications'),
   created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
     .notNull()
     .defaultNow(),
