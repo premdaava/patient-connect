@@ -1,34 +1,11 @@
-'use client';
+import { getTenantContext } from '@/lib/tenant';
+import { getTemplates } from '@/features/templates/queries';
+import { TemplatesView } from '@/components/templates/templates-view';
 
-import { PageHeader } from '@/components/shared/page-header';
-import { EmptyState } from '@/components/shared/empty-state';
-import { Button } from '@/components/ui/button';
-import { FileText, Plus } from 'lucide-react';
+export default async function TemplatesPage() {
+  const { site } = await getTenantContext();
+  const templates = await getTemplates(site.id);
 
-export default function TemplatesPage() {
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        icon={FileText}
-        title="Templates"
-        description="Message templates with merge fields"
-        actions={
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Template
-          </Button>
-        }
-      />
-
-      <EmptyState
-        icon={FileText}
-        title="No templates yet"
-        description="Create reusable message templates with merge fields for personalization"
-        action={{
-          label: 'New Template',
-          onClick: () => console.log('New template'),
-        }}
-      />
-    </div>
-  );
+  return <TemplatesView initialTemplates={templates} siteId={site.id} siteName={site.name} />;
 }
+
