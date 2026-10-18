@@ -83,7 +83,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </div>
                           <div>
                             <p className="font-medium text-sm">{apt.patient_first} {apt.patient_last}</p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground" suppressHydrationWarning>
                               {apt.appointment_type} • {aptDate.toLocaleDateString([], { month: 'short', day: 'numeric' })} at {aptDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -116,7 +116,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       <Link key={reply.id} href={`/inbox?thread=${reply.thread_id}`} className="block rounded-lg border p-3 transition-colors hover:bg-muted/50">
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-medium text-sm">{reply.patient_first} {reply.patient_last}</span>
-                          <span className="text-xs text-muted-foreground">{replyDate.toLocaleDateString([], { month: 'short', day: 'numeric' })} at {replyDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span className="text-xs text-muted-foreground" suppressHydrationWarning>{replyDate.toLocaleDateString([], { month: 'short', day: 'numeric' })} at {replyDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-1">&ldquo;{reply.body}&rdquo;</p>
                       </Link>

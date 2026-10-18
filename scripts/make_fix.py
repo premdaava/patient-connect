@@ -80,7 +80,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <div className="w-full max-w-xl space-y-4">
         <div className="flex justify-between items-center">
-          <Link href="/" className="font-bold text-xl">DAG Connect</Link>
+          <Link href="/" className="font-bold text-xl">Patient Connect</Link>
           <Button variant="outline" size="sm" onClick={handleFillSample}>
             <Sparkles className="h-4 w-4 mr-1"/>Fill Sample
           </Button>

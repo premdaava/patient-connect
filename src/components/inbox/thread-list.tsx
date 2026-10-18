@@ -93,7 +93,7 @@ export function ThreadList({ threads, selectedThreadId, onSelectThread }: Props)
                     <span className={`text-xs font-medium truncate ${unread ? 'font-bold' : ''}`}>
                       {patient.first_name} {patient.last_name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span className="text-[10px] text-muted-foreground shrink-0" suppressHydrationWarning>
                       {new Date(t.last_message_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                     </span>
                   </div>

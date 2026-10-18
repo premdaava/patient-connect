@@ -23,6 +23,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   SESSION_SECRET: z.string().min(32),
   APP_URL: z.string().url(),
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 
@@ -33,6 +35,8 @@ function validateEnv(): Env {
     DATABASE_URL: process.env.DATABASE_URL,
     SESSION_SECRET: process.env.SESSION_SECRET,
     APP_URL: process.env.APP_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
     NODE_ENV: process.env.NODE_ENV,
   });
 

@@ -39,7 +39,7 @@ export default function OnboardingPage() {
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow-md text-xl mb-2">
             PC
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Welcome to DAG Patient Connect!</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">Welcome to Patient Connect!</h1>
           <p className="text-muted-foreground">Complete your practice setup to get the most out of your patient engagement platform.</p>
         </div>
 

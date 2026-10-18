@@ -44,7 +44,7 @@ export async function sendEmail({ siteId, patientId, to, subject, body }: SendEm
         html: `<div style="font-family: sans-serif; padding: 20px; line-height: 1.6; color: #333;">
           <p>${body.replace(/\n/g, '<br/>')}</p>
           <hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #888;">Sent via DAG Patient Connect</p>
+          <p style="font-size: 12px; color: #888;">Sent via Patient Connect</p>
         </div>`,
       }),
     });
@@ -63,3 +63,53 @@ export async function sendEmail({ siteId, patientId, to, subject, body }: SendEm
     return { success: false, error: err.message || 'Network error sending email via Resend' };
   }
 }
+
+export interface SendGeneralEmailParams {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+export async function sendGeneralEmail({ to, subject, body }: SendGeneralEmailParams): Promise<{ success: boolean; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+  if (!apiKey) {
+    console.log(`[Mock Email / No Resend API Key] Sending to ${to} [Subject: ${subject}]: "${body}"`);
+    return { success: true };
+  }
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [to],
+        subject: subject,
+        html: `<div style="font-family: sans-serif; padding: 20px; line-height: 1.6; color: #333;">
+          <p>${body.replace(/\n/g, '<br/>')}</p>
+          <hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;" />
+          <p style="font-size: 12px; color: #888;">Sent via Patient Connect</p>
+        </div>`,
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.error('Resend API error:', errData);
+      return { success: false, error: errData.message || 'Failed to send email via Resend API' };
+    }
+
+    const data = await res.json();
+    console.log(`[Resend Email Success] ID: ${data.id}, sent to ${to}`);
+    return { success: true };
+  } catch (err: any) {
+    console.error('Resend network error:', err);
+    return { success: false, error: err.message || 'Network error sending email via Resend' };
+  }
+}
+

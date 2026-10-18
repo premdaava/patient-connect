@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'DAG Patient Connect',
+  title: 'Patient Connect',
   description: 'Multi-tenant patient engagement platform',
 };
 

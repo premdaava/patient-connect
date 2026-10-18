@@ -1,10 +1,10 @@
-# CLAUDE.md — DAG Patient Connect (UI-first MVP)
+# CLAUDE.md — Patient Connect (UI-first MVP)
 
 Read this file fully before every task. It is the source of truth for structure, stack, design and rules.
 
 ## 1. Goal
-A multi-tenant patient engagement platform (Solutionreach-style) for **DAG sites**.
-Each DAG site = one tenant (a practice/clinic).
+A multi-tenant patient engagement platform (Solutionreach-style) for **Patient Connect sites**.
+Each Patient Connect site = one tenant (a practice/clinic).
 
 **This MVP is a polished, clickable, demo-ready product.** UI quality and smooth page-to-page flow matter MORE than backend depth.
 - Login, registration, onboarding, patients, appointments, messages, campaigns, reviews etc. run on **predefined seed data** in local Postgres.
@@ -33,7 +33,7 @@ Validate env with Zod in `src/lib/env.ts`.
 ## 4. Demo data and credentials
 - Seeded sites: **Bright Smiles Dental** (main demo, rich data), **Lakeside Family Clinic**, **Peak Physio**.
 - Demo login (prefilled on the login page, plus a "Continue as demo user" button):
-  `demo@dagpatientconnect.com` / `Demo@1234` → owner of Bright Smiles Dental.
+  `demo@patientconnect.com` / `Demo@1234` → owner of Bright Smiles Dental.
 - Registration is a **3-step wizard** (Account → Practice → Preferences). A "Fill sample data" button prefills it. Submit creates a real user + site, copies a starter dataset (templates, ~25 sample patients, appointments) so the new account never looks empty, then goes to onboarding.
 - Seed (`pnpm db:seed`) is idempotent: wipes and recreates demo data. Main demo site has ~60 patients, 14 days of appointments (past + future), 8 inbox threads, 6 templates, 3 campaigns, 20 review requests, 30 days of message stats for charts.
 - Use realistic names, varied avatars (initials with colored backgrounds), realistic appointment types (cleaning, exam, whitening, consult).

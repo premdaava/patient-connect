@@ -9,6 +9,7 @@ import * as schema from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { hashSync } from 'bcryptjs';
+import { sendGeneralEmail } from '@/lib/providers/email.resend';
 
 export async function updatePracticeSettings(siteId: string, data: {
   name: string;
@@ -154,6 +155,13 @@ export async function inviteTeamMember(siteId: string, data: {
       role: data.role,
     });
   }
+
+  // Send invitation email
+  await sendGeneralEmail({
+    to: data.email,
+    subject: "You've been invited to Patient Connect",
+    body: `Hi ${data.first_name},\n\nYou have been invited to join Patient Connect as a ${data.role}.\n\nYou can log in at ${process.env.APP_URL || 'http://localhost:3000'}/login using:\nEmail: ${data.email}\nTemporary Password: Welcome@123\n\nPlease log in and update your password.`,
+  });
 
   revalidatePath('/settings');
   return { success: true };

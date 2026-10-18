@@ -67,14 +67,14 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         {!isCollapsed && (
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <span className="font-semibold">D</span>
+              <span className="font-semibold">PC</span>
             </div>
-            <span className="font-semibold">DAG Patient Connect</span>
+            <span className="font-semibold">Patient Connect</span>
           </Link>
         )}
         {isCollapsed && (
           <Link href="/dashboard" className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <span className="font-semibold">D</span>
+            <span className="font-semibold">PC</span>
           </Link>
         )}
       </div>

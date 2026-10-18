@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const secretKey = new TextEncoder().encode(process.env.SESSION_SECRET || 'fallback-secret-key-32-chars-minimum');
+const secretKey = new TextEncoder().encode(process.env.SESSION_SECRET || 'super-secret-session-secret-at-least-32-chars-long');
 
 export async function middleware(request: NextRequest) {
   const cookie = request.cookies.get('dag_session')?.value;

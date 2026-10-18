@@ -1,7 +1,7 @@
 if (typeof window === 'undefined' && process.env.NEXT_RUNTIME) {
   require('server-only');
 }
-import { getSession } from './session';
+import { getSession, destroySession } from './session';
 import { db } from '@/db';
 import * as schema from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation';
 export async function getTenantContext() {
   const session = await getSession();
   if (!session) {
+    await destroySession();
     redirect('/login');
   }
 
@@ -26,6 +27,7 @@ export async function getTenantContext() {
     .limit(1);
 
   if (!user || !site) {
+    await destroySession();
     redirect('/login');
   }
 
@@ -47,4 +49,5 @@ export async function getTenantContext() {
     session,
   };
 }
+
 

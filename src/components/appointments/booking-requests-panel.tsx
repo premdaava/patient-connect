@@ -86,7 +86,7 @@ export function BookingRequestsPanel({ requests, siteId }: { requests: any[]; si
               <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1"><Phone className="h-3 w-3 text-primary" /> {req.phone}</span>
                 {req.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3 text-primary" /> {req.email}</span>}
-                <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-primary" /> {new Date(req.preferred_date).toLocaleString()}</span>
+                <span className="flex items-center gap-1" suppressHydrationWarning><Calendar className="h-3 w-3 text-primary" /> {new Date(req.preferred_date).toLocaleString()}</span>
               </div>
               {req.notes && (
                 <p className="text-xs text-muted-foreground italic bg-muted/50 p-2 rounded-lg mt-1">

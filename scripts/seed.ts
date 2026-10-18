@@ -53,7 +53,7 @@ async function main() {
 
   const passwordHash = hashSync("Demo@1234", 10);
   const [demoUser, staff1, staff2] = await db.insert(schema.users).values([
-    { email: "demo@dagpatientconnect.com", password_hash: passwordHash, first_name: "Demo", last_name: "User", phone: "+12125551000" },
+    { email: "demo@patientconnect.com", password_hash: passwordHash, first_name: "Demo", last_name: "User", phone: "+12125551000" },
     { email: "sarah.johnson@brightsmilesdental.com", password_hash: passwordHash, first_name: "Sarah", last_name: "Johnson", phone: "+12125551001" },
     { email: "mike.chen@brightsmilesdental.com", password_hash: passwordHash, first_name: "Mike", last_name: "Chen", phone: "+12125551002" }
   ]).returning();

@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex h-14 items-center gap-4 border-b bg-background px-4 md:hidden">
           <MobileNav />
-          <span className="font-semibold">DAG Patient Connect</span>
+          <span className="font-semibold">Patient Connect</span>
         </div>
         <div className="hidden md:block">
           <TopBar />

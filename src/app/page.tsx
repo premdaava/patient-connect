@@ -23,7 +23,7 @@ export default function HomePage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold shadow-md">
             PC
           </div>
-          <span className="text-xl font-bold tracking-tight">DAG Patient Connect</span>
+          <span className="text-xl font-bold tracking-tight">Patient Connect</span>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/login">
@@ -65,7 +65,7 @@ export default function HomePage() {
 
       <footer className="mt-auto border-t py-8 px-6 lg:px-12 text-center text-sm text-muted-foreground">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} DAG Patient Connect. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Patient Connect. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/login" className="hover:underline">Sign In</Link>
             <Link href="/register" className="hover:underline">Register</Link>

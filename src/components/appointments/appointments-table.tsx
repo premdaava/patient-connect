@@ -46,7 +46,7 @@ export function AppointmentsTable({ appointments, onSelectAppointment }: { appoi
               </TableCell>
               <TableCell>{apt.appointment_type}</TableCell>
               <TableCell>{apt.provider}</TableCell>
-              <TableCell>
+              <TableCell suppressHydrationWarning>
                 <div>{new Date(apt.start_time).toLocaleDateString()}</div>
                 <div className="text-xs text-muted-foreground">
                   {new Date(apt.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 

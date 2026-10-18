@@ -42,7 +42,7 @@ with open("/Users/premkumark/Sites/DAG/dag-patient-connect/src/app/register/page
     f.write('  return (\\n')
     f.write('    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">\\n')
     f.write('      <div className="w-full max-w-xl space-y-4">\\n')
-    f.write('        <div className="flex justify-between items-center"><Link href="/" className="font-bold">DAG Connect</Link><Button variant="outline" size="sm" onClick={handleFillSample}><Sparkles className="h-4 w-4 mr-1"/>Fill Sample</Button></div>\\n')
+    f.write('        <div className="flex justify-between items-center"><Link href="/" className="font-bold">Patient Connect</Link><Button variant="outline" size="sm" onClick={handleFillSample}><Sparkles className="h-4 w-4 mr-1"/>Fill Sample</Button></div>\\n')
     f.write('        <Card><CardHeader><CardTitle className="text-center">Create Practice Account</CardTitle><Stepper steps={steps} currentStep={step} /></CardHeader>\\n')
     f.write('        <CardContent className="space-y-4 pt-4">\\n')
     f.write('          {step === 1 && (<div className="space-y-4"><div><label>First Name</label><input className="w-full border rounded p-2" value={formData.firstName} onChange={e => updateField("firstName", e.target.value)}/></div><div><label>Email</label><input className="w-full border rounded p-2" value={formData.email} onChange={e => updateField("email", e.target.value)}/></div><div><label>Password</label><input type="password" className="w-full border rounded p-2" value={formData.password} onChange={e => updateField("password", e.target.value)}/></div></div>)}\\n')

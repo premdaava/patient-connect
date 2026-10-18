@@ -59,7 +59,7 @@ export default async function LoginPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
               PC
             </div>
-            DAG Patient Connect
+            Patient Connect
           </Link>
         </div>
 

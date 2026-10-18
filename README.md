@@ -1,4 +1,4 @@
-# DAG Patient Connect
+# Patient Connect
 
 A multi-tenant patient engagement and practice management platform built with Next.js (App Router), TypeScript, Tailwind CSS, shadcn UI, Drizzle ORM, and PostgreSQL.
 
@@ -49,7 +49,7 @@ graph TD
 ## 🔑 Demo Credentials
 
 After seeding the database, you can log in with:
-- **Email**: `demo@dagpatientconnect.com`
+- **Email**: `demo@patientconnect.com`
 - **Password**: `Demo@1234`
 - **Practice**: Bright Smiles Dental (Default)
 
