@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, MessageSquare, ExternalLink, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ensurePatientThread } from '@/features/inbox/actions';
 
 export function ReviewRequestsTable({ requests }: { requests: any[] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,12 +47,12 @@ export function ReviewRequestsTable({ requests }: { requests: any[] }) {
               <TableHead>Status</TableHead>
               <TableHead>Rating & Feedback</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
-              <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">No review requests found.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">No review requests found.</TableCell></TableRow>
             ) : (
               filtered.map((req) => {
                 const ratingNum = req.rating ? parseInt(req.rating, 10) : null;
@@ -74,18 +75,17 @@ export function ReviewRequestsTable({ requests }: { requests: any[] }) {
                           {isLow && (
                             <div className="flex items-center gap-1.5 mt-1">
                               <Badge variant="destructive" className="text-[10px] gap-1 px-1.5 py-0.5"><AlertCircle className="h-3 w-3" /> Needs follow-up</Badge>
-                              <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => router.push(`/inbox?patient_id=${req.patient_id}`)}><MessageSquare className="h-3 w-3 mr-1" /> Reply</Button>
+                              <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={async () => {
+                                await ensurePatientThread(req.patient_id, req.channel);
+                                router.push(`/inbox?patient_id=${req.patient_id}`);
+                              }}><MessageSquare className="h-3 w-3 mr-1" /> Reply</Button>
                             </div>
                           )}
                         </div>
                       ) : (<span className="text-xs text-muted-foreground">Pending</span>)}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{req.sent_at ? req.sent_at.split('T')[0] : '-'}</TableCell>
-                    <TableCell className="text-right">
-                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" asChild>
-                        <a href={`/r/${req.token}`} target="_blank" rel="noreferrer" title="Open Link"><ExternalLink className="h-4 w-4" /></a>
-                      </Button>
-                    </TableCell>
+
                   </TableRow>
                 );
               })

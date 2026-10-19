@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ThreadList } from './thread-list';
 import { ChatPanel } from './chat-panel';
 import { PatientSidebar } from './patient-sidebar';
@@ -17,8 +18,17 @@ interface Props {
 }
 
 export function InboxView({ initialThreads, templates, siteId, siteName, userId }: Props) {
+  const searchParams = useSearchParams();
+  const patientIdParam = searchParams.get('patient_id');
+
   const [threads, setThreads] = useState<any[]>(initialThreads);
-  const [selectedThread, setSelectedThread] = useState<any>(initialThreads[0] || null);
+  const [selectedThread, setSelectedThread] = useState<any>(() => {
+    if (patientIdParam) {
+      const found = initialThreads.find(t => t.patient_id === patientIdParam || t.patient?.id === patientIdParam);
+      if (found) return found;
+    }
+    return initialThreads[0] || null;
+  });
   const [messages, setMessages] = useState<any[]>([]);
 
   const loadMessages = useCallback(async (threadId: string) => {

@@ -40,13 +40,20 @@ export function TopBar() {
   const fullName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'Demo User';
   const email = user.email || 'demo@dagpatientconnect.com';
   const siteName = site.name || 'Bright Smiles Dental';
+  const logoUrl = site.logo_url;
   const initials = `${user.first_name?.[0] || 'D'}${user.last_name?.[0] || 'U'}`;
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
       {/* Practice / Clinic Identifier */}
       <div className="flex items-center gap-2 rounded-lg border bg-card px-3 py-1.5 shadow-xs">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
+        {logoUrl ? (
+          <div className="h-5 w-5 rounded-md overflow-hidden bg-muted flex items-center justify-center shrink-0">
+            <img src={logoUrl} alt={siteName} className="h-full w-full object-cover" />
+          </div>
+        ) : (
+          <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+        )}
         <span className="font-semibold text-sm text-foreground">{siteName}</span>
       </div>
 

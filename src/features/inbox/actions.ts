@@ -190,3 +190,35 @@ export async function getPatientNextAppointment(siteId: string, patientId: strin
   return apt || null;
 }
 
+
+export async function getOrCreateThread(siteId: string, patientId: string, channel: string = 'sms') {
+  let [thread] = await db
+    .select()
+    .from(schema.threads)
+    .where(and(eq(schema.threads.site_id, siteId), eq(schema.threads.patient_id, patientId)))
+    .limit(1);
+
+  if (!thread) {
+    const now = new Date().toISOString();
+    [thread] = await db
+      .insert(schema.threads)
+      .values({
+        site_id: siteId,
+        patient_id: patientId,
+        channel,
+        status: 'open',
+        last_message_at: now,
+        last_message_preview: 'Review feedback follow-up',
+        unread_count: '0',
+      })
+      .returning();
+  }
+
+  return thread;
+}
+
+export async function ensurePatientThread(patientId: string, channel: string = 'sms') {
+  const { site } = await getTenantContext();
+  return await getOrCreateThread(site.id, patientId, channel);
+}
+
