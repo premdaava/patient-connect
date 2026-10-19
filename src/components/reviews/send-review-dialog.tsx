@@ -12,10 +12,15 @@ import { toast } from 'sonner';
 
 interface SendReviewDialogProps {
   patients: any[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function SendReviewDialog({ patients }: SendReviewDialogProps) {
-  const [open, setOpen] = useState(false);
+export function SendReviewDialog({ patients, open: externalOpen, onOpenChange: externalOnOpenChange }: SendReviewDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = externalOpen !== undefined;
+  const open = isControlled ? externalOpen : internalOpen;
+  const setOpen = isControlled ? externalOnOpenChange! : setInternalOpen;
   const [patientId, setPatientId] = useState('');
   const [channel, setChannel] = useState<'sms' | 'email'>('sms');
   const [body, setBody] = useState('');
@@ -48,11 +53,13 @@ export function SendReviewDialog({ patients }: SendReviewDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Send Review Request
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> Send Review Request
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
