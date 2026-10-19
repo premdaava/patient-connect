@@ -6,7 +6,7 @@ if (typeof window === 'undefined' && process.env.NEXT_RUNTIME) {
 
 import { db } from '@/db';
 import * as schema from '@/db/schema';
-import { eq, and, asc, sql } from 'drizzle-orm';
+import { eq, and, asc, desc, sql } from 'drizzle-orm';
 import { sendMockSms } from '@/lib/providers/sms.mock';
 import { revalidatePath } from 'next/cache';
 import { getThreads, ThreadFilters } from './queries';
@@ -220,5 +220,44 @@ export async function getOrCreateThread(siteId: string, patientId: string, chann
 export async function ensurePatientThread(patientId: string, channel: string = 'sms') {
   const { site } = await getTenantContext();
   return await getOrCreateThread(site.id, patientId, channel);
+}
+
+export async function getNotifications(siteId: string) {
+  const unreadThreads = await db
+    .select({
+      id: schema.threads.id,
+      patient_id: schema.threads.patient_id,
+      last_message_preview: schema.threads.last_message_preview,
+      last_message_at: schema.threads.last_message_at,
+      patient_first: schema.patients.first_name,
+      patient_last: schema.patients.last_name,
+    })
+    .from(schema.threads)
+    .innerJoin(schema.patients, eq(schema.threads.patient_id, schema.patients.id))
+    .where(and(eq(schema.threads.site_id, siteId), sql`CAST(${schema.threads.unread_count} AS INTEGER) > 0`))
+    .orderBy(desc(schema.threads.last_message_at))
+    .limit(5);
+
+  const lowReviews = await db
+    .select({
+      id: schema.reviewRequests.id,
+      patient_id: schema.reviewRequests.patient_id,
+      rating: schema.reviewRequests.rating,
+      feedback: schema.reviewRequests.feedback,
+      submitted_at: schema.reviewRequests.submitted_at,
+      patient_first: schema.patients.first_name,
+      patient_last: schema.patients.last_name,
+    })
+    .from(schema.reviewRequests)
+    .innerJoin(schema.patients, eq(schema.reviewRequests.patient_id, schema.patients.id))
+    .where(and(eq(schema.reviewRequests.site_id, siteId), sql`CAST(${schema.reviewRequests.rating} AS INTEGER) <= 3`, sql`${schema.reviewRequests.rating} IS NOT NULL`))
+    .orderBy(desc(schema.reviewRequests.submitted_at))
+    .limit(5);
+
+  return {
+    unreadThreads,
+    lowReviews,
+    totalCount: unreadThreads.length + lowReviews.length,
+  };
 }
 

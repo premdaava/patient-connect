@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Bell, Building2 } from 'lucide-react';
+import { Search, Bell, Building2, MessageSquare, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,17 +14,31 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { getCurrentUser } from '@/features/profile/queries';
+import { getNotifications, ensurePatientThread } from '@/features/inbox/actions';
 
 export function TopBar() {
   const router = useRouter();
   const pathname = usePathname();
   const [userData, setUserData] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [notifications, setNotifications] = useState<{ unreadThreads: any[]; lowReviews: any[]; totalCount: number }>({
+    unreadThreads: [],
+    lowReviews: [],
+    totalCount: 0,
+  });
 
   useEffect(() => {
-    const fetchUser = () => {
-      getCurrentUser().then((res) => {
-        if (res) setUserData(res);
-      }).catch(() => {});
+    const fetchUser = async () => {
+      try {
+        const res = await getCurrentUser();
+        if (res) {
+          setUserData(res);
+          if (res.site?.id) {
+            const notifs = await getNotifications(res.site.id);
+            setNotifications(notifs);
+          }
+        }
+      } catch (err) {}
     };
 
     fetchUser();
@@ -34,6 +48,12 @@ export function TopBar() {
       window.removeEventListener('profile-updated', fetchUser);
     };
   }, [pathname]);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      router.push(`/patients?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const user = userData?.user || {};
   const site = userData?.site || {};
@@ -60,14 +80,91 @@ export function TopBar() {
       {/* Search */}
       <div className="relative ml-auto flex-1 md:max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search patients, appointments..." className="pl-9" />
+        <Input
+          placeholder="Search patients (Press Enter)..."
+          className="pl-9"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+        />
       </div>
 
       {/* Notifications */}
-      <Button variant="ghost" size="icon" className="relative">
-        <Bell className="h-5 w-5" />
-        <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-red-600" />
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="relative">
+            <Bell className="h-5 w-5" />
+            {notifications.totalCount > 0 && (
+              <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-red-600 animate-pulse" />
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-80">
+          <DropdownMenuLabel className="flex items-center justify-between">
+            <span>Notifications</span>
+            {notifications.totalCount > 0 && (
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold">
+                {notifications.totalCount} new
+              </span>
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {notifications.totalCount === 0 ? (
+            <div className="py-6 text-center text-xs text-muted-foreground">
+              No new notifications
+            </div>
+          ) : (
+            <div className="max-h-80 overflow-y-auto space-y-1">
+              {notifications.unreadThreads.map((thread) => (
+                <DropdownMenuItem
+                  key={`thread-${thread.id}`}
+                  className="flex flex-col items-start gap-1 p-2 cursor-pointer"
+                  onClick={async () => {
+                    await ensurePatientThread(thread.patient_id);
+                    router.push(`/inbox?patient_id=${thread.patient_id}`);
+                  }}
+                >
+                  <div className="flex items-center gap-1.5 font-medium text-xs">
+                    <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                    <span>Unread message from {thread.patient_first} {thread.patient_last}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground line-clamp-1 pl-5">
+                    {thread.last_message_preview || 'New message'}
+                  </p>
+                </DropdownMenuItem>
+              ))}
+
+              {notifications.lowReviews.map((rev) => (
+                <DropdownMenuItem
+                  key={`review-${rev.id}`}
+                  className="flex flex-col items-start gap-1 p-2 cursor-pointer"
+                  onClick={async () => {
+                    await ensurePatientThread(rev.patient_id);
+                    router.push(`/inbox?patient_id=${rev.patient_id}`);
+                  }}
+                >
+                  <div className="flex items-center gap-1.5 font-medium text-xs text-destructive">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    <span>Low review ({rev.rating}★) from {rev.patient_first} {rev.patient_last}</span>
+                  </div>
+                  {rev.feedback && (
+                    <p className="text-[11px] text-muted-foreground italic line-clamp-1 pl-5">
+                      &quot;{rev.feedback}&quot;
+                    </p>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </div>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-center justify-center text-xs text-primary font-medium cursor-pointer"
+            onClick={() => router.push('/inbox')}
+          >
+            View all in Inbox
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* User Menu */}
       <DropdownMenu>

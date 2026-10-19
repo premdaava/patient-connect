@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Stepper } from "@/components/shared/stepper";
 import { toast } from "sonner";
-import { Sparkles, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterClient() {
   const router = useRouter();
@@ -17,22 +17,21 @@ export default function RegisterClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "Alex", lastName: "Rivera", email: "alex@riveradental.com",
-    password: "Password123!", phone: "+12125553333",
-    practiceName: "Rivera Dental Studio", practiceSlug: "rivera-dental-studio",
-    timezone: "America/New_York", practicePhone: "+12125554444",
-    reviewLink: "https://g.page/r/riveradental/review", reminderHours: "24", channels: "both"
+    firstName: "", lastName: "", email: "",
+    password: "", phone: "",
+    practiceName: "", practiceSlug: "",
+    timezone: "America/New_York", practicePhone: "",
+    reviewLink: "", reminderHours: "24", channels: "both"
   });
-  const updateField = (k: string, v: string) => setFormData(p => ({ ...p, [k]: v }));
-  const handleFillSample = () => {
-    setFormData({
-      firstName: "Dr. Jordan", lastName: "Smith", email: "dr.smith." + Date.now() + "@apex.test",
-      password: "Password123!", phone: "+13035557777",
-      practiceName: "Apex Dental", practiceSlug: "apex-dental-" + Date.now(),
-      timezone: "America/Denver", practicePhone: "+13035558888",
-      reviewLink: "https://g.page/r/apex/review", reminderHours: "24", channels: "both"
+
+  const updateField = (k: string, v: string) => {
+    setFormData(p => {
+      const updated = { ...p, [k]: v };
+      if (k === 'practiceName') {
+        updated.practiceSlug = v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+      return updated;
     });
-    toast.success("Sample filled!");
   };
   const steps = [{ label: "Account" }, { label: "Practice" }, { label: "Preferences" }];
   const handleSubmit = async () => {
@@ -51,11 +50,15 @@ export default function RegisterClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <div className="w-full max-w-xl space-y-4">
-        <div className="flex justify-between items-center">
-          <Link href="/" className="font-bold text-xl">Patient Connect</Link>
-          <Button variant="outline" size="sm" onClick={handleFillSample}><Sparkles className="h-4 w-4 mr-1"/>Sample</Button>
+    <div className="flex min-h-screen w-full items-center justify-center bg-muted/30 px-4 py-12">
+      <div className="w-full max-w-xl">
+        <div className="mb-8 text-center">
+          <Link href="/" className="inline-flex items-center gap-2 font-bold text-xl">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
+              PC
+            </div>
+            Patient Connect
+          </Link>
         </div>
         <Card>
           <CardHeader>
